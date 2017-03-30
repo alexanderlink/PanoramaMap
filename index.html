@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- This stylesheet contains specific styles for displaying the map
+         on this page. Replace it with your own styles as described in the
+         documentation:
+         https://developers.google.com/maps/documentation/javascript/tutorial -->
+    <link rel="stylesheet" href="https://developers.google.com/maps/documentation/javascript/demos/demos.css">
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      function initMap() {
+        var myLatLng = {lat: 28.274104, lng: -16.607043};
+
+        // Create a map object and specify the DOM element for display.
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: myLatLng,
+          scrollwheel: true,
+          zoom: 14
+        });
+
+        var image = {
+          url: 'https://lh3.ggpht.com/hx6IeSRualApBd7KZB9s2N7bcHZIjtgr9VEuOxHzpd05_CZ6RxZwehpXCRN-1ps3HuL0g8Wi=w9-h9',
+          //size: new google.maps.Size(20, 32),
+          //origin: new google.maps.Point(0, 0),
+          //anchor: new google.maps.Point(0, 32)
+        };		
+		
+        // Create a marker and set its position.
+        var marker = new google.maps.Marker({
+          map: map,
+          position: myLatLng,
+          title: 'Teide',
+		  icon: image
+        });
+		
+		
+		var infowindow = new google.maps.InfoWindow({
+			content: "<div><iframe src=\"https://www.google.com/maps/embed?pb=!1m0!3m2!1sde!2sde!4v1490874995635!6m8!1m7!1sF%3A-2e4bWoMsZis%2FWNVw1jS4Q9I%2FAAAAAAAAIPc%2F8dYrsYcHBcQt8H6KpqzrbAVdUuf93FmIQCLIB!2m2!1d28.2741041!2d-16.607043!3f280.12201364066857!4f0!5f0.7820865974627469\" width=\"600\" height=\"320\" frameborder=\"0\" style=\"border:0\" allowfullscreen></iframe>" + 
+			"<a href=\"https://www.google.de/maps/place/28%C2%B016'26.8%22N+16%C2%B036'25.4%22W/@28.2741041,-16.607043,3a,75y,280.12h,90t/data=!3m8!1e1!3m6!1s-2e4bWoMsZis%2FWNVw1jS4Q9I%2FAAAAAAAAIPc%2F8dYrsYcHBcQt8H6KpqzrbAVdUuf93FmIQCLIB!2e4!3e11!6s%2F%2Flh5.googleusercontent.com%2F-2e4bWoMsZis%2FWNVw1jS4Q9I%2FAAAAAAAAIPc%2F8dYrsYcHBcQt8H6KpqzrbAVdUuf93FmIQCLIB%2Fw203-h100-k-no-pi0-ya233.45908-ro-0-fo100%2F!7i6144!8i3072!4m5!3m4!1s0x0:0x0!8m2!3d28.2741041!4d-16.607043\">Open Panorama</a></div>"
+		});
+		
+		marker.addListener('mouseover', function() {
+			infowindow.open(map, marker);
+		});
+		
+      }
+
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=API_KEY&callback=initMap"
+        async defer></script>
+  </body>
+</html>
