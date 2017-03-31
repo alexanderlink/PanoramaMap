@@ -1,54 +1,172 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <!-- This stylesheet contains specific styles for displaying the map
-         on this page. Replace it with your own styles as described in the
-         documentation:
-         https://developers.google.com/maps/documentation/javascript/tutorial -->
-    <link rel="stylesheet" href="https://developers.google.com/maps/documentation/javascript/demos/demos.css">
+   <meta charset="UTF-8"> 
+    <!-- https://developers.google.com/maps/documentation/javascript/tutorial -->
+    <style>
+		body {
+		  margin: 0;
+		}
+
+		#map {
+		  height: 100%;
+		  position: absolute;
+		  width: 100%;
+		}
+
+		.maps-frame {
+		  height: 430px;
+		  width: 100%;
+		}
+
+		.kd-tabbed-vert.header-links .kd-tabbutton a {
+		  color: #757575;
+		  display: inline-block;
+		  height: 100%;
+		  padding: 0 24px;
+		  width: 100%;
+		}
+
+		.kd-tabbed-vert.header-links .kd-tabbutton {
+		  padding: 0;
+		}
+
+		.kd-tabbed-vert.header-links .kd-tabbutton.selected a {
+		  color: #03a9f4;
+		}
+
+		.kd-tabbed-vert.header-links .kd-tabbutton a:focus {
+		  text-decoration: none;
+		}
+
+		p.top-desc {
+		  padding: 1em 1em .1em 1em;
+		}
+
+		p.bottom-desc {
+		  padding: 0em 1em 1em 1em;
+		}
+	</style>
   </head>
   <body>
     <div id="map"></div>
+
     <script>
-      function initMap() {
-        var myLatLng = {lat: 28.274104, lng: -16.607043};
+		var locations = [
+			{	title: "Teide",
+				url: "https://www.google.com/maps/@28.2722352,-16.6419569,0a,75y/data=!3m5!1e1!3m3!1s-IzMLeH6iLIU%2FWNZWRHqMSmI%2FAAAAAAAAIWs%2FUSzsLJFVi_EnwFv1foCkLYCv5MaDzG1cwCLIB!2e4!6s%2F%2Flh3.googleusercontent.com%2F-IzMLeH6iLIU%2FWNZWRHqMSmI%2FAAAAAAAAIWs%2FUSzsLJFVi_EnwFv1foCkLYCv5MaDzG1cwCLIB%2Fno%2Fphoto.jpg",
+				embedUrl: "https://www.google.com/maps/embed?pb=!1m0!3m2!1sde!2sus!4v1490976909723!6m8!1m7!1sF%3A-IzMLeH6iLIU%2FWNZWRHqMSmI%2FAAAAAAAAIWs%2FUSzsLJFVi_EnwFv1foCkLYCv5MaDzG1cwCLIB!2m2!1d28.27223523169976!2d-16.64195688610514!3f0!4f0!5f0.7820865974627469"},
+			{	title: "Teide",
+				url: "https://www.google.com/maps/@28.2723796,-16.6419416,0a,75y,193.5h,60t/data=!3m5!1e1!3m3!1s-DYGm9otYxMk%2FWNZWVty_jxI%2FAAAAAAAAIW0%2F5BrMI4JXHX4AAvIXTNa8Ov2CpA57pWUUQCLIB!2e4!6s%2F%2Flh4.googleusercontent.com%2F-DYGm9otYxMk%2FWNZWVty_jxI%2FAAAAAAAAIW0%2F5BrMI4JXHX4AAvIXTNa8Ov2CpA57pWUUQCLIB%2Fno%2Fphoto.jpg",
+				embedUrl: "https://www.google.com/maps/embed?pb=!1m0!3m2!1sde!2sus!4v1490977045707!6m8!1m7!1sF%3A-DYGm9otYxMk%2FWNZWVty_jxI%2FAAAAAAAAIW0%2F5BrMI4JXHX4AAvIXTNa8Ov2CpA57pWUUQCLIB!2m2!1d28.27237963284224!2d-16.64194159471756!3f193.5!4f-30!5f0.7820865974627469"},
+			{	title: "Teide",
+				url: "https://www.google.com/maps/@28.2726665,-16.6422069,0a,75y,238.5h,90t/data=!3m5!1e1!3m3!1s-iabw3Tndh6g%2FWNZWONlVzpI%2FAAAAAAAAIWo%2FbV-zBbGTI7UXse8kuHFkyp0bjyv_NXXDwCLIB!2e4!6s%2F%2Flh4.googleusercontent.com%2F-iabw3Tndh6g%2FWNZWONlVzpI%2FAAAAAAAAIWo%2FbV-zBbGTI7UXse8kuHFkyp0bjyv_NXXDwCLIB%2Fno%2Fphoto.jpg",
+				embedUrl: "https://www.google.com/maps/embed?pb=!1m0!3m2!1sde!2sus!4v1490977078793!6m8!1m7!1sF%3A-iabw3Tndh6g%2FWNZWONlVzpI%2FAAAAAAAAIWo%2FbV-zBbGTI7UXse8kuHFkyp0bjyv_NXXDwCLIB!2m2!1d28.27266654021525!2d-16.64220685547005!3f238.5!4f0!5f0.7820865974627469"},
 
-        // Create a map object and specify the DOM element for display.
-        var map = new google.maps.Map(document.getElementById('map'), {
-          center: myLatLng,
-          scrollwheel: true,
-          zoom: 14
-        });
-
+				
+			{	title: "",
+				url: "",
+				embedUrl: ""},
+				
+				
+			//Masca
+			{	title: "Masca",
+				url: "https://www.google.com/maps/@28.303544,-16.8320881,0a,75y/data=!3m5!1e1!3m3!1s-0AHQ5iTVf5c%2FWNfmfWPCYwI%2FAAAAAAAAIXc%2Fy4BOQ6Pd5S0VdP4pB7mRbgHvZuan-eKyACLIB!2e4!6s%2F%2Flh4.googleusercontent.com%2F-0AHQ5iTVf5c%2FWNfmfWPCYwI%2FAAAAAAAAIXc%2Fy4BOQ6Pd5S0VdP4pB7mRbgHvZuan-eKyACLIB%2Fno%2Fphoto.jpg",
+				embedUrl: ""},
+			{	title: "Masca",
+				url: "https://www.google.com/maps/@28.3108073,-16.8459489,0a,75y/data=!3m5!1e1!3m3!1s-9xPFzVy6PKc%2FWNfmlVh95LI%2FAAAAAAAAIXg%2FnfPCZMqlMLkBRqzZ7KBR9kext-vHzKF3wCLIB!2e4!6s%2F%2Flh4.googleusercontent.com%2F-9xPFzVy6PKc%2FWNfmlVh95LI%2FAAAAAAAAIXg%2FnfPCZMqlMLkBRqzZ7KBR9kext-vHzKF3wCLIB%2Fno%2Fphoto.jpg",
+				embedUrl: ""},
+			{	title: "Masca",
+				url: "https://www.google.com/maps/@28.3037855,-16.8368272,0a,75y,243.86h,86.7t/data=!3m5!1e1!3m3!1s-AziL-7ndadk%2FWNfmPIoaA4I%2FAAAAAAAAIXQ%2F7UuFVseUEfwmEb_WJPTW4IBbIvFWREVggCLIB!2e4!6s%2F%2Flh4.googleusercontent.com%2F-AziL-7ndadk%2FWNfmPIoaA4I%2FAAAAAAAAIXQ%2F7UuFVseUEfwmEb_WJPTW4IBbIvFWREVggCLIB%2Fno%2Fphoto.jpg",
+				embedUrl: ""},
+			{	title: "Masca",
+				url: "https://www.google.com/maps/@28.305421,-16.8405147,0a,75y/data=!3m5!1e1!3m3!1s-c15sR712AvU%2FWNfmZxuJkXI%2FAAAAAAAAIXY%2FebHgjOtFdkoX5cB1Ab1aSC6xBYRva4phACLIB!2e4!6s%2F%2Flh5.googleusercontent.com%2F-c15sR712AvU%2FWNfmZxuJkXI%2FAAAAAAAAIXY%2FebHgjOtFdkoX5cB1Ab1aSC6xBYRva4phACLIB%2Fno%2Fphoto.jpg",
+				embedUrl: ""},
+			{	title: "Masca",
+				url: "https://www.google.com/maps/@28.3033099,-16.8412765,0a,75y/data=!3m5!1e1!3m3!1s-Ezl_lh_dkyw%2FWNfmUFTtLMI%2FAAAAAAAAIXU%2FCSsZUOlgECI4cWcFwh4QpZ6vz1_5hEeEQCLIB!2e4!6s%2F%2Flh5.googleusercontent.com%2F-Ezl_lh_dkyw%2FWNfmUFTtLMI%2FAAAAAAAAIXU%2FCSsZUOlgECI4cWcFwh4QpZ6vz1_5hEeEQCLIB%2Fno%2Fphoto.jpg",
+				embedUrl: ""},
+			{	title: "Masca",
+				url: "https://www.google.com/maps/@28.3033099,-16.8412765,0a,75y/data=!3m5!1e1!3m3!1s-Ezl_lh_dkyw%2FWNfmUFTtLMI%2FAAAAAAAAIXU%2FCSsZUOlgECI4cWcFwh4QpZ6vz1_5hEeEQCLIB!2e4!6s%2F%2Flh5.googleusercontent.com%2F-Ezl_lh_dkyw%2FWNfmUFTtLMI%2FAAAAAAAAIXU%2FCSsZUOlgECI4cWcFwh4QpZ6vz1_5hEeEQCLIB%2Fno%2Fphoto.jpg",
+				embedUrl: ""},
+			{	title: "Starting point of the Masca beach track",
+				url: "https://www.google.com/maps/@28.3043372,-16.8404954,0a,75y,182.11h,74.42t/data=!3m5!1e1!3m3!1s-7CQCSJwIF7U%2FWNfmIu-BwmI%2FAAAAAAAAIVs%2FYUTyVond-t8cAZldxkib-XUZNPSFNrW-QCLIB!2e4!6s%2F%2Flh6.googleusercontent.com%2F-7CQCSJwIF7U%2FWNfmIu-BwmI%2FAAAAAAAAIVs%2FYUTyVond-t8cAZldxkib-XUZNPSFNrW-QCLIB%2Fno%2Fphoto.jpg",
+				embedUrl: ""},
+			{	title: "",
+				url: "",
+				embedUrl: ""}
+				
+		];
+    </script>
+	
+    <script>
         var image = {
           url: 'https://lh3.ggpht.com/hx6IeSRualApBd7KZB9s2N7bcHZIjtgr9VEuOxHzpd05_CZ6RxZwehpXCRN-1ps3HuL0g8Wi=w9-h9',
-          //size: new google.maps.Size(20, 32),
-          //origin: new google.maps.Point(0, 0),
-          //anchor: new google.maps.Point(0, 32)
         };		
+		var popups = [];
+
+	  function closeAllPopups() {
+		popups.forEach(function(popup) {
+			popup.close();
+		});
+	  }
 		
-        // Create a marker and set its position.
+	  function addLocation(map, loc) {
+	    if(!loc.url) return;
+		var match = /.*@([\-0-9.]*),([\-0-9.]*).*/.exec(loc.url);
+		var lat = match[1];
+		var lng = match[2];
+		var myLatLng = {lat: parseFloat(lat), lng: parseFloat(lng)};
+	  
         var marker = new google.maps.Marker({
           map: map,
           position: myLatLng,
-          title: 'Teide',
+          title: loc.title,
 		  icon: image
         });
 		
-		
+		var infoContent = "<div>";
+		if(loc.embedUrl) infoContent += "<iframe src=\"" + loc.embedUrl + "\" width=\"600\" height=\"320\" frameborder=\"0\" style=\"border:0\" allowfullscreen></iframe>";
+		if(loc.url) infoContent += "<br><a href=\"" + loc.url + "\">Open Panorama</a></div>";
+		infoContent += "</div>";
 		var infowindow = new google.maps.InfoWindow({
-			content: "<div><iframe src=\"https://www.google.com/maps/embed?pb=!1m0!3m2!1sde!2sde!4v1490874995635!6m8!1m7!1sF%3A-2e4bWoMsZis%2FWNVw1jS4Q9I%2FAAAAAAAAIPc%2F8dYrsYcHBcQt8H6KpqzrbAVdUuf93FmIQCLIB!2m2!1d28.2741041!2d-16.607043!3f280.12201364066857!4f0!5f0.7820865974627469\" width=\"600\" height=\"320\" frameborder=\"0\" style=\"border:0\" allowfullscreen></iframe>" + 
-			"<a href=\"https://www.google.de/maps/place/28%C2%B016'26.8%22N+16%C2%B036'25.4%22W/@28.2741041,-16.607043,3a,75y,280.12h,90t/data=!3m8!1e1!3m6!1s-2e4bWoMsZis%2FWNVw1jS4Q9I%2FAAAAAAAAIPc%2F8dYrsYcHBcQt8H6KpqzrbAVdUuf93FmIQCLIB!2e4!3e11!6s%2F%2Flh5.googleusercontent.com%2F-2e4bWoMsZis%2FWNVw1jS4Q9I%2FAAAAAAAAIPc%2F8dYrsYcHBcQt8H6KpqzrbAVdUuf93FmIQCLIB%2Fw203-h100-k-no-pi0-ya233.45908-ro-0-fo100%2F!7i6144!8i3072!4m5!3m4!1s0x0:0x0!8m2!3d28.2741041!4d-16.607043\">Open Panorama</a></div>"
+			content: infoContent			
 		});
+		popups.push(infowindow);
 		
-		marker.addListener('mouseover', function() {
+		marker.addListener('click', function() {
+			closeAllPopups();
 			infowindow.open(map, marker);
 		});
-		
+	  }
+	
+      function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 28.274104, lng: -16.607043},
+          scrollwheel: true,
+          zoom: 12,
+		  scaleControl: true,
+		  zoomControl: true,
+			mapTypeControl: true,
+			mapTypeControlOptions: {
+			  style: google.maps.MapTypeControlStyle.DEFAULT,
+			  mapTypeIds: [
+				google.maps.MapTypeId.ROADMAP,
+				google.maps.MapTypeId.TERRAIN,
+				google.maps.MapTypeId.SATELLITE,
+				google.maps.MapTypeId.HYBRID
+			  ]
+			}
+        });
+		map.addListener('click', function() {
+			closeAllPopups();
+		});
+
+		locations.forEach(function(loc) {
+			addLocation(map, loc);
+		});
       }
 
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=API_KEY&callback=initMap"
-        async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap" async defer></script>
   </body>
 </html>
