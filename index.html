@@ -70,13 +70,13 @@
 				images: []
 			},
 
-			{	title: "Plaza de España",
+			{	title: "Plaza de Espaï¿½a",
 				url: "https://www.google.com/maps/contrib/106520948131374590025/photos/@28.4669148,-16.2474467,3a,75y,31h,90t/data=!3m7!1e1!3m5!1s-n50Hnr6mgoQ%2FWNAyrVfcqSI%2FAAAAAAAAIH8%2Fc5QisOnGVn4vQ2_0LlF1ATovAQM3KvIygCLIB!2e4!6s%2F%2Flh3.googleusercontent.com%2F-n50Hnr6mgoQ%2FWNAyrVfcqSI%2FAAAAAAAAIH8%2Fc5QisOnGVn4vQ2_0LlF1ATovAQM3KvIygCLIB%2Fw203-h100-p-k-no%2F!7i6144!8i3072!4m3!8m2!3m1!1e1",
 				embedUrl: "https://www.google.com/maps/embed?pb=!1m0!4v1491130980599!6m8!1m7!1sF%3A-n50Hnr6mgoQ%2FWNAyrVfcqSI%2FAAAAAAAAIH8%2Fc5QisOnGVn4vQ2_0LlF1ATovAQM3KvIygCLIB!2m2!1d28.466914801939442!2d-16.247446737000445!3f31!4f0!5f0.7820865974627469",
 				images: []
 			},
 
-			{	title: "Parador de Cañadas del Teide",
+			{	title: "Parador de Caï¿½adas del Teide",
 				url: "https://www.google.com/maps/contrib/106520948131374590025/photos/@28.2248023,-16.6269727,3a,75y,355h,90t/data=!3m7!1e1!3m5!1s-qtUR3uesp4w%2FWNJ5R3VdSuI%2FAAAAAAAAIKs%2FKMvJjGaoQo81O11-PyCgkvQGy_k6LYiygCLIB!2e4!6s%2F%2Flh5.googleusercontent.com%2F-qtUR3uesp4w%2FWNJ5R3VdSuI%2FAAAAAAAAIKs%2FKMvJjGaoQo81O11-PyCgkvQGy_k6LYiygCLIB%2Fw203-h100-p-k-no-pi0-ya192.50002-ro0-fo100%2F!7i6144!8i3072!4m3!8m2!3m1!1e1",
 				embedUrl: "https://www.google.com/maps/embed?pb=!1m0!4v1491130912926!6m8!1m7!1sF%3A-qtUR3uesp4w%2FWNJ5R3VdSuI%2FAAAAAAAAIKs%2FKMvJjGaoQo81O11-PyCgkvQGy_k6LYiygCLIB!2m2!1d28.22480225553837!2d-16.626972742413024!3f355!4f0!5f0.7820865974627469",
 				images: ['https://goo.gl/maps/LjwUoaxKkN42']
@@ -261,6 +261,7 @@
 			},
 				
 		];
+
     </script>
 	
     <script>
@@ -268,6 +269,22 @@
           url: 'https://lh3.ggpht.com/hx6IeSRualApBd7KZB9s2N7bcHZIjtgr9VEuOxHzpd05_CZ6RxZwehpXCRN-1ps3HuL0g8Wi=w9-h9',
         };		
 		var popups = [];
+		var route = [];
+
+		function appendRoute(map, latlng) {
+			route.push(latlng);
+
+			var flightPath = new google.maps.Polyline({
+				path: route,
+				geodesic: true,
+				strokeColor: '#FF0000',
+				strokeOpacity: 1.0,
+				strokeWeight: 2
+			});
+
+			flightPath.setMap(map);
+			
+		}
 
 	  function closeAllPopups() {
 		popups.forEach(function(popup) {
@@ -328,8 +345,13 @@
 			  ]
 			}
         });
-		map.addListener('click', function() {
+		map.addListener('rightclick', function(e) {
+			alert(JSON.stringify(route));
+		});
+
+		map.addListener('click', function(e) {
 			closeAllPopups();
+			appendRoute(map, e.latLng);
 		});
 
 		locations.forEach(function(loc) {
