@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/> 
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 		<!-- https://developers.google.com/maps/documentation/javascript/tutorial -->
 		<style>
 			body {
@@ -46,6 +47,19 @@
 			p.bottom-desc {
 				padding: 0em 1em 1em 1em;
 			}
+
+			.popup {
+				width: 600px;
+				height: 320px;
+				border-width: 0;
+				border-style: none;
+			}
+			.popup-mobile {
+				width: 300px;
+				height: 240px;
+				border-width: 0;
+				border-style: none;
+			}
 		</style>
 		<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>	
 	</head>
@@ -56,6 +70,7 @@
 
 <script>
 	var debug = false;
+	var isMobile = false;
 
 	var locations = [
 			
@@ -317,6 +332,23 @@
 		path.setMap(map);
 	}
 
+	function preparePopup(map, loc) {
+		var infoContent = "<div>";
+		if(loc.title) infoContent += "<h4>" + loc.title + "</h4>";
+		if(loc.embedUrl) infoContent += "<iframe src=\"" + loc.embedUrl + "\" class=\"popup" + (isMobile ? "-mobile" : "") + "\" allowfullscreen></iframe><br>";
+		if(loc.images && loc.images.length > 0) {
+			loc.images.forEach(function(img) {
+				infoContent += ("<a target='_blank' href='" + img + "'>Image</a> | ");
+			});
+		}
+		if(loc.url) infoContent += "<a target='_blank' href=\"" + loc.url + "\">Open Panorama</a> ";
+		infoContent += "</div>";
+		var infowindow = new google.maps.InfoWindow({
+			content: infoContent			
+		});
+		return infowindow;
+	}
+
 	function addLocation(map, loc) {
 		if(!loc.url) return;
 		var match = /.*@([\-0-9.]*),([\-0-9.]*).*/.exec(loc.url);
@@ -338,36 +370,43 @@
 				strokeOpacity: 0.7
     	}
 		});
-		
-		var infoContent = "<div>";
-		if(loc.title) infoContent += "<h4>" + loc.title + "</h4>";
-		if(loc.embedUrl) infoContent += "<iframe src=\"" + loc.embedUrl + "\" width=\"600\" height=\"320\" frameborder=\"0\" style=\"border:0\" allowfullscreen></iframe><br>";
-		if(loc.images && loc.images.length > 0) {
-			loc.images.forEach(function(img) {
-				infoContent += ("<a target='_blank' href='" + img + "'>Image</a> | ");
-			});
-		}
-		if(loc.url) infoContent += "<a target='_blank' href=\"" + loc.url + "\">Open Panorama</a> ";
-		infoContent += "</div>";
-		var infowindow = new google.maps.InfoWindow({
-			content: infoContent			
-		});
-		popups.push(infowindow);
-		
-		marker.addListener('click', function() {
+
+		var popup = preparePopup(map, loc);
+		popups.push(popup);
+	    marker.addListener('click', function() {
 			closeAllPopups();
-			infowindow.open(map, marker);
+			popup.open(map, marker);
 		});
 	}
-	
+
+	function detectBrowser() {
+		var useragent = navigator.userAgent;
+		var mapdiv = document.getElementById("map");
+		if(debug) $('#output').val(useragent);
+		if (useragent.indexOf('iPhone') != -1 || useragent.indexOf('Android') != -1 ) {
+			mapdiv.style.width = '100%';
+			mapdiv.style.height = '100%';
+			isMobile = true;
+		} else {
+			mapdiv.style.width = '100%';
+			mapdiv.style.height = '100%';
+			//mapdiv.style.width = '600px';
+			//mapdiv.style.height = '800px';
+			isMobile = false;
+		}
+	}
+
 	function initMap() {
 		if(!debug) $('#output').remove();
+		detectBrowser();
+
 		var map = new google.maps.Map(document.getElementById('map'), {
 			center: {lat: 28.2915147, lng: -16.6104693},
 			scrollwheel: true,
 			zoom: 10,
 			scaleControl: true,
 			zoomControl: true,
+			mapTypeId: google.maps.MapTypeId.TERRAIN,
 			mapTypeControl: true,
 			mapTypeControlOptions: {
 				style: google.maps.MapTypeControlStyle.DEFAULT,
