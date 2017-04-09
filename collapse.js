@@ -5,7 +5,27 @@ function collapseCallback() {
     overlay.draw = function() {};
     overlay.setMap(map);
     projection = overlay.getProjection();
+    collectPixelPositions();
     collapseCloseLocations();
+    //Refresh
+    google.maps.event.trigger(map, 'resize');
+    //map.setZoom( map.getZoom() );
+}
+
+function collectPixelPositions() {
+    locations.forEach(function(loc) {
+        var px = null;
+        if(loc.marker && loc.marker.position) {
+            px = getPoint(loc.marker.position);
+            loc.marker.position.px = px;
+        }
+    });
+}
+
+function getPoint(latLng) {
+    if(!projection) return null;
+    var point = projection.fromLatLngToContainerPixel(latLng);
+    return point;
 }
 
 function collapseCloseLocations() {
@@ -14,6 +34,7 @@ function collapseCloseLocations() {
         locations.forEach(function(loc2) {
             if(!loc1.marker || !loc2.marker) return; //Corrupt location
             if(!loc1.marker.map || !loc2.marker.map) return; //Not visible
+            if(!loc1.marker.position.px || !loc2.marker.position.px) return; //Not visible
             var diffPx = getLatLngPixelDiff(loc1.marker.position, loc2.marker.position);
             if(!diffPx) {
                 console.log("No diff results")
@@ -25,11 +46,20 @@ function collapseCloseLocations() {
         });
     });
     if(found > 0) {
-        //Refresh
-        google.maps.event.trigger(map, 'resize');
-        //map.setZoom( map.getZoom() );
+        collapseCloseLocations();
     }
-    return found;
+}
+
+function getLatLngPixelDiff(latLng1, latLng2) {
+    if(latLng1 == latLng2) return null;
+    var result = {};
+    result.p1 = latLng1.px;
+    result.p2 = latLng2.px;
+    if(!result.p1 || !result.p2) return null;
+    result.dx = result.p2.x - result.p1.x;
+    result.dy = result.p2.y - result.p1.y;
+    result.len = Math.sqrt(Math.pow(result.dx, 2) + Math.pow(result.dy, 2));
+    return result;
 }
 
 function joinMarkers(loc1, loc2) {
@@ -56,22 +86,4 @@ function joinMarkers(loc1, loc2) {
         }
     });
     //locations.push(newLoc);
-}
-
-function getLatLngPixelDiff(latLng1, latLng2) {
-    if(latLng1 == latLng2) return null;
-    var result = {};
-    result.p1 = getPoint(latLng1);
-    result.p2 = getPoint(latLng2);
-    if(!result.p1 || !result.p2) return null;
-    result.dx = result.p2.x - result.p1.x;
-    result.dy = result.p2.y - result.p1.y;
-    result.len = Math.sqrt(Math.pow(result.dx, 2) + Math.pow(result.dy, 2));
-    return result;
-}
-
-function getPoint(latLng) {
-    if(!projection) return null;
-    var point = projection.fromLatLngToContainerPixel(latLng);
-    return point;
 }
