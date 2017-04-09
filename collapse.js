@@ -1,12 +1,19 @@
+var collectors;
+
 function collapseCallback() {
-    console.log("IDLE");
+    console.log("tilesloaded");
     //if(overlay) overlay.setMap(null);
     overlay = new google.maps.OverlayView();
     overlay.draw = function() {};
     overlay.setMap(map);
     projection = overlay.getProjection();
+    if(!projection) {
+        console.log('Projection : ' + projection);
+        return;
+    }
     collectPixelPositions();
-    collapseCloseLocations();
+    collectCloseLocations();
+    joinCollectors();
     //Refresh
     google.maps.event.trigger(map, 'resize');
     //map.setZoom( map.getZoom() );
@@ -28,8 +35,9 @@ function getPoint(latLng) {
     return point;
 }
 
-function collapseCloseLocations() {
+function collectCloseLocations() {
     var found = 0;
+    collectors = [];
     locations.forEach(function(loc1) {
         locations.forEach(function(loc2) {
             if(!loc1.marker || !loc2.marker) return; //Corrupt location
@@ -41,13 +49,10 @@ function collapseCloseLocations() {
             } else if(diffPx.len < 50) {
                 console.log("FOUND " + loc1.marker + ' / ' + loc2.marker);
                 found++;
-                joinMarkers(loc1, loc2);
+                collectMarkers(loc1, loc2);
             }
         });
     });
-    if(found > 0) {
-        collapseCloseLocations();
-    }
 }
 
 function getLatLngPixelDiff(latLng1, latLng2) {
@@ -62,7 +67,43 @@ function getLatLngPixelDiff(latLng1, latLng2) {
     return result;
 }
 
-function joinMarkers(loc1, loc2) {
+function collectMarkers(loc1, loc2) {
+    var collector = null;
+    if(!collector && loc1.collector) collector = loc1.collector;
+    if(!collector && loc2.collector) collector = loc2.collector;
+    if(!collector) {
+        collector = [];
+        collectors.push(collector);
+    }
+    collector.push(loc1);
+    collector.push(loc2);
+    loc1.collector = collector;
+    loc2.collector = collector;
+}
+
+function joinCollectors() {
+    collectors.forEach(function(collector) {
+        collector.forEach(function(loc) {
+            loc.marker.setMap(null);
+        });
+        var marker = new google.maps.Marker({
+            map: map,
+            position: collector[0].marker.position, //TODO
+            title: "MORE",
+            icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 6,
+                strokeWeight: 4,
+                fillColor: 'black',
+                fillOpacity: 0.7,
+                strokeColor: 'yellow',
+                strokeOpacity: 0.7
+            }
+        });        
+    });
+}
+
+/*function joinMarkers(loc1, loc2) {
     //loc1.marker.icon.strokeColor = 'yellow';
     //loc2.marker.icon.strokeColor = 'yellow';
     loc1.marker.setMap(null);
@@ -86,4 +127,4 @@ function joinMarkers(loc1, loc2) {
         }
     });
     //locations.push(newLoc);
-}
+}*/
