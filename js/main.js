@@ -107,17 +107,6 @@ function detectBrowser() {
 function init() {
 	if(!debug) $('#output').remove();
 	detectBrowser();
-	//Load data - TODO CORS issues
-	/*$.getJSON("http://www.alx-soft.de/PanoramaMap/locations.json", function(json) {
-		locations = json;
-		$.getJSON("http://www.alx-soft.de/PanoramaMap/routes.json", function(json) {
-			routes = json;
-			initMap();
-		});
-	});
-	*/
-	locations = locationsTeneriffa;
-	routes = routesTeneriffa;
 	initMap();
 }
 

@@ -1,4 +1,4 @@
-var locationsTeneriffa = [
+locations = [
 	{	"title": "",
 		"url": "",
 		"embedUrl": "",
