@@ -9,11 +9,17 @@ function collapseCallback() {
     projection = overlay.getProjection();
     if(!projection) {
         console.log('Projection : ' + projection);
+		setTimeout(collapseCallback, 10);
         return;
     }
     collectPixelPositions();
     collectCloseLocations();
     joinCollectors();
+	refresh();
+	setTimeout(refresh, 2000);
+}
+
+function refresh() {
     //Refresh
     google.maps.event.trigger(map, 'resize');
     //map.setZoom( map.getZoom() );
@@ -99,7 +105,15 @@ function joinCollectors() {
                 strokeColor: 'yellow',
                 strokeOpacity: 0.7
             }
-        });        
+        });
+		marker.collector = collector;
+		marker.addListener('click', function() {
+			collector.forEach(function(loc) {
+				loc.marker.setMap(map);
+			});
+			marker.setMap(null);
+			setTimeout(collapseCallback, 2000);
+		});
     });
 }
 
