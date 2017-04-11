@@ -1,5 +1,7 @@
 var COLLECTOR_MIN_PX_DISTANCE = 20;
+var ZOOM_DELTA = 2;
 var collectors = [];
+var collectorMarkers = [];
 
 function collapseCallback() {
     console.log("collapseCallback");
@@ -13,6 +15,9 @@ function collapseCallback() {
 		setTimeout(collapseCallback, 10);
         return;
     }
+	collectorMarkers.forEach(function(marker) {
+		marker.setMap(null);
+	});
     collectPixelPositions();
     collectCloseLocations();
     joinCollectors();
@@ -52,6 +57,7 @@ function collectCloseLocations() {
             if(!loc1.marker || !loc2.marker) return; //Corrupt location
             if(!loc1.marker.map || !loc2.marker.map) return; //Not visible
             if(!loc1.marker.position.px || !loc2.marker.position.px) return; //Not visible
+			if(loc1.collector && loc2.collector) return; //Already collected
             var diffPx = getLatLngPixelDiff(loc1.marker.position, loc2.marker.position);
             if(!diffPx) {
                 //console.log("No diff results")
@@ -85,10 +91,16 @@ function collectMarkers(loc1, loc2) {
         collector = [];
         collectors.push(collector);
     }
-    collector.push(loc1);
-    collector.push(loc2);
+	addLocationToCollector(collector, loc1);
+	addLocationToCollector(collector, loc2);
     loc1.collector = collector;
     loc2.collector = collector;
+}
+
+function addLocationToCollector(collector, loc) {
+	if(collector.indexOf(loc) < 0) {
+		collector.push(loc);
+	}
 }
 
 function joinCollectors() {
@@ -99,28 +111,43 @@ function joinCollectors() {
             loc.marker.setMap(null);
             countClosed++;
         });
-        var marker = new google.maps.Marker({
-            map: map,
-            position: collector[0].marker.position, //TODO
-            title: "MORE",
-            icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                scale: 6,
-                strokeWeight: 4,
-                fillColor: 'black',
-                fillOpacity: 0.7,
-                strokeColor: 'yellow',
-                strokeOpacity: 0.7
-            }
-        });
-        countCreated++;
-		marker.collector = collector;
-        collector.marker = marker;
-		marker.addListener('click', function() {
-            expandCollector(marker);
-		});
+		createCollectorMarker(collector);
+		countCreated++;
     });
     console.log("joinCollectors: " + countClosed + " closed, " + countCreated  + " created");
+}
+
+function createCollectorMarker(collector) {
+	var cMarker = new google.maps.Marker({
+		map: map,
+		position: collector[0].marker.position, //TODO
+		title: "Collection",
+		label: {
+			text: ''+collector.length,
+			color: 'white',
+			fontSize: '10pt'
+		},
+		icon: {
+			path: google.maps.SymbolPath.CIRCLE,
+			scale: 10,
+			strokeWeight: 4,
+			fillColor: 'black',
+			fillOpacity: 0.7,
+			strokeColor: 'red',
+			strokeOpacity: 0.7
+		}
+	});
+	cMarker.collector = collector;
+	collector.marker = cMarker;
+	cMarker.addListener('click', function() {
+		map.setZoom(map.getZoom()+ZOOM_DELTA);
+		map.setCenter(cMarker.position);
+		expandCollector(cMarker);
+	});
+	cMarker.addListener('rightclick', function() {
+		alert(cMarker.collector.length);
+	});
+	collectorMarkers.push(cMarker);
 }
 
 function expandCollectors() {
@@ -129,20 +156,21 @@ function expandCollectors() {
      });
 }
 
-function expandCollector(marker) {
-    marker.collector.forEach(function(loc) {
+function expandCollector(cMarker) {
+    cMarker.collector.forEach(function(loc) {
         loc.marker.setMap(map);
+		loc.marker.collector = null;
     });
-    marker.setMap(null);
-    removeCollector(marker.collector);
-    refresh();
+    cMarker.setMap(null);
+    removeCollector(cMarker);
+    setTimeout(refresh, 500);
     setTimeout(collapseCallback, 2000);
 }
 
-function removeCollector(toBeRemoved) {
+function removeCollector(cMarker) {
     var newCollectors = [];
     collectors.forEach(function(collector) {
-        if(collector != toBeRemoved) {
+        if(collector != cMarker.collector) {
             newCollectors.push(collector);
         } else {
             collector.forEach(function(loc) {
@@ -150,5 +178,8 @@ function removeCollector(toBeRemoved) {
             });
         }
     });
-    collectors = newCollectors;
+	var oldCollector = cMarker.collector;
+	cMarker.collector = null;
+	oldCollector.marker = null;
+	collectors = newCollectors;
 }
