@@ -1,3 +1,4 @@
+var COLLECTOR_MIN_PX_DISTANCE = 20;
 var collectors = [];
 
 function collapseCallback() {
@@ -54,7 +55,7 @@ function collectCloseLocations() {
             var diffPx = getLatLngPixelDiff(loc1.marker.position, loc2.marker.position);
             if(!diffPx) {
                 //console.log("No diff results")
-            } else if(diffPx.len < 50) {
+            } else if(diffPx.len < COLLECTOR_MIN_PX_DISTANCE) {
                 //console.log("FOUND " + loc1.marker + ' / ' + loc2.marker);
                 found++;
                 collectMarkers(loc1, loc2);
@@ -129,7 +130,13 @@ function joinCollectors() {
 function removeCollector(toBeRemoved) {
     var newCollectors = [];
     collectors.forEach(function(collector) {
-        if(collector != toBeRemoved) newCollectors.push(collector);
+        if(collector != toBeRemoved) {
+            newCollectors.push(collector);
+        } else {
+            collector.forEach(function(loc) {
+                loc.collector = null;
+            });
+        }
     });
     collectors = newCollectors;
 }
