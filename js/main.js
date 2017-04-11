@@ -104,6 +104,10 @@ function detectBrowser() {
 	}
 }
 
+function onResized() {
+	expandCollectors();
+}
+
 function init() {
 	if(!debug) $('#output').remove();
 	detectBrowser();
@@ -146,6 +150,9 @@ function initMap() {
 	routes.forEach(function(route) {
 		addRoute(map, route);
 	});
+
+	// Wait for map loaded
+	google.maps.event.addListener(map, 'zoom_changed', onResized);
 
 	// Wait for map loaded
 	google.maps.event.addListener(map, 'tilesloaded', collapseCallback);

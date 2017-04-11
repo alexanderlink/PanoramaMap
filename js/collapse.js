@@ -115,16 +115,28 @@ function joinCollectors() {
         });
         countCreated++;
 		marker.collector = collector;
+        collector.marker = marker;
 		marker.addListener('click', function() {
-			collector.forEach(function(loc) {
-				loc.marker.setMap(map);
-			});
-			marker.setMap(null);
-            removeCollector(collector);
-			setTimeout(collapseCallback, 2000);
+            expandCollector(marker);
 		});
     });
     console.log("joinCollectors: " + countClosed + " closed, " + countCreated  + " created");
+}
+
+function expandCollectors() {
+     collectors.forEach(function(collector) {
+        expandCollector(collector.marker);
+     });
+}
+
+function expandCollector(marker) {
+    marker.collector.forEach(function(loc) {
+        loc.marker.setMap(map);
+    });
+    marker.setMap(null);
+    removeCollector(marker.collector);
+    refresh();
+    setTimeout(collapseCallback, 2000);
 }
 
 function removeCollector(toBeRemoved) {
