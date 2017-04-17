@@ -1,4 +1,4 @@
-locations = [
+locations = locations.concat([
 	{	"title": "",
 		"url": "",
 		"embedUrl": "",
@@ -203,4 +203,4 @@ locations = [
 		"embedUrl": "",
 		"images": []
 	}
-];
+]);

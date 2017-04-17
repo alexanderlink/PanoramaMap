@@ -1,4 +1,4 @@
-locations = [
+locations = locations.concat([
 	{	"title": "Pico de El Teide",
 		"url": "https://www.google.com/maps/contrib/106520948131374590025/photos/@28.2719745,-16.6420453,3a,75y,148h,90t/data=!3m7!1e1!3m5!1s-LsLwGGCoNKA%2FWNZWMADrGCI%2FAAAAAAAAIWk%2Fe3gWNUp_McICIQk10ZR8BQFLXiE75Fq0gCLIB!2e4!6s%2F%2Flh4.googleusercontent.com%2F-LsLwGGCoNKA%2FWNZWMADrGCI%2FAAAAAAAAIWk%2Fe3gWNUp_McICIQk10ZR8BQFLXiE75Fq0gCLIB%2Fw203-h100-p-k-no-pi0-ya135.50002-ro0-fo100%2F!7i6144!8i3072!4m3!8m2!3m1!1e1",
 		"embedUrl": "https://www.google.com/maps/embed?pb=!1m0!4v1491130642064!6m8!1m7!1sF%3A-LsLwGGCoNKA%2FWNZWMADrGCI%2FAAAAAAAAIWk%2Fe3gWNUp_McICIQk10ZR8BQFLXiE75Fq0gCLIB!2m2!1d28.271974472738467!2d-16.642045306326217!3f148!4f0!5f0.7820865974627469",
@@ -26,4 +26,4 @@ locations = [
 	{	"title": "Masca",
 		"url": "https://www.google.com/maps/@28.3108073,-16.8459489,3a,75y,358.07h,90t/data=!3m8!1e1!3m6!1s-9xPFzVy6PKc%2FWNfmlVh95LI%2FAAAAAAAAIXg%2FnfPCZMqlMLkBRqzZ7KBR9kext-vHzKF3wCLIB!2e4!3e11!6s%2F%2Flh4.googleusercontent.com%2F-9xPFzVy6PKc%2FWNfmlVh95LI%2FAAAAAAAAIXg%2FnfPCZMqlMLkBRqzZ7KBR9kext-vHzKF3wCLIB%2Fw203-h100-k-no-pi-0-ya214.3028-ro-0-fo100%2F!7i6144!8i3072",
 		"embedUrl": "https://www.google.com/maps/embed?pb=!1m0!3m2!1sde!2sus!4v1491052352638!6m8!1m7!1sF%3A-9xPFzVy6PKc%2FWNfmlVh95LI%2FAAAAAAAAIXg%2FnfPCZMqlMLkBRqzZ7KBR9kext-vHzKF3wCLIB!2m2!1d28.3108073!2d-16.8459489!3f358.07237968704067!4f0!5f0.7820865974627469"}	
-];
+]);
