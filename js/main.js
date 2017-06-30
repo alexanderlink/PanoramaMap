@@ -1,4 +1,4 @@
-var debug = false;
+var debug = true;
 var isMobile = false;
 
 var popups = [];
@@ -8,11 +8,13 @@ var overlay, projection;
 var locations = [];
 var routes = [];
 
+var debugPath;
 var debugRoute = []; //debug
 function appendDebugRoute(map, latlng) {
 	debugRoute.push(latlng);
 
-	var flightPath = new google.maps.Polyline({
+	if(debugPath) debugPath.setMap(null);
+	debugPath = new google.maps.Polyline({
 		path: debugRoute,
 		geodesic: true,
 		strokeColor: '#FF0000',
@@ -20,7 +22,24 @@ function appendDebugRoute(map, latlng) {
 		strokeWeight: 2
 	});
 
-	flightPath.setMap(map);
+	debugPath.setMap(map);
+	$('#output').val(JSON.stringify(debugRoute));
+}
+
+function removeDebugRoute(map) {
+	debugRoute.pop();	
+
+	if(debugPath) debugPath.setMap(null);
+	debugPath = new google.maps.Polyline({
+		path: debugRoute,
+		geodesic: true,
+		strokeColor: '#FF0000',
+		strokeOpacity: 1.0,
+		strokeWeight: 2
+	});
+
+	debugPath.setMap(map);
+	$('#output').val(JSON.stringify(debugRoute));
 }
 
 function closeAllPopups() {
@@ -30,6 +49,34 @@ function closeAllPopups() {
 }
 
 function addRoute(map, route) {
+	var marker = new google.maps.Marker({
+		map: map,
+		position: route[0],
+		title: 'Start',
+		icon: {
+			path: google.maps.SymbolPath.BACKWARD_OPEN_ARROW,
+			scale: 3,
+			strokeWeight: 2,
+			fillColor: 'black',
+			fillOpacity: 0.7,
+			strokeColor: 'lightgreen',
+			strokeOpacity: 0.7
+		}
+	});
+	var marker2 = new google.maps.Marker({
+		map: map,
+		position: route[route.length-1],
+		title: 'End',
+		icon: {
+			path: google.maps.SymbolPath.BACKWARD_OPEN_ARROW,
+			scale: 3,
+			strokeWeight: 2,
+			fillColor: 'black',
+			fillOpacity: 0.7,
+			strokeColor: 'yellow',
+			strokeOpacity: 0.7
+		}
+	});	
 	var path = new google.maps.Polyline({
 		path: route,
 		geodesic: true,
@@ -116,9 +163,9 @@ function init() {
 
 function initMap() {
 	map = new google.maps.Map(document.getElementById('map'), {
-		center: {lat: 28.2915147, lng: -16.6104693},
+		center: {lat: 49.1682924, lng: 20.1466945},
+		zoom: 12,
 		scrollwheel: true,
-		zoom: 10,
 		scaleControl: true,
 		zoomControl: true,
 		mapTypeId: google.maps.MapTypeId.TERRAIN,
@@ -134,21 +181,21 @@ function initMap() {
 		}
 	});
 
-	map.addListener('rightclick', function(e) {
-		if(debug) $('#output').val(JSON.stringify(debugRoute));
-	});
-
 	map.addListener('click', function(e) {
 		closeAllPopups();
 		if(debug) appendDebugRoute(map, e.latLng);
 	});
-
-	locations.forEach(function(loc) {
-		addLocation(map, loc);
+	map.addListener('rightclick', function(e) {
+		closeAllPopups();
+		if(debug) removeDebugRoute(map);
 	});
 
 	routes.forEach(function(route) {
 		addRoute(map, route);
+	});
+
+	locations.forEach(function(loc) {
+		addLocation(map, loc);
 	});
 
 	// Wait for map loaded
